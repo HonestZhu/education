@@ -2,11 +2,11 @@
   <a-layout class="layout-demo">
     <a-layout-sider theme="dark" breakpoint="lg" :width="250" collapsible :collapsed="collapsed" @collapse="onCollapse">
       <!-- <div class="logo" /> -->
-      <RouterLink class="title" to="/首页">
-        <div >教育局综合信息服务平台</div>
+      <RouterLink class="title" to="/home">
+        <div>教育局综合信息服务平台</div>
       </RouterLink>
 
-      
+
 
       <a-menu @menuItemClick="onClickMenuItem">
         <a-sub-menu key="0">
@@ -17,7 +17,8 @@
           <a-menu-item key="0_2">成长信息记录</a-menu-item>
           <a-menu-item key="0_3">成长手册</a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="1">
+        <a-menu-item key="1">教师管理</a-menu-item>
+        <!-- <a-sub-menu key="1">
           <template #title>
             <span>教师管理</span>
           </template>
@@ -28,26 +29,32 @@
           <a-menu-item key="1_5">异动管理</a-menu-item>
           <a-menu-item key="1_6">绩效考核</a-menu-item>
           <a-menu-item key="1_7">统计查询</a-menu-item>
-        </a-sub-menu>
+        </a-sub-menu> -->
         <a-sub-menu key="2">
           <template #title>
             <span>校产管理</span>
           </template>
-          <RouterLink active-class="" to="/校产管理/设备管理">
+          <RouterLink active-class="" to="/property/equipment">
             <a-menu-item key="2_1">设备管理</a-menu-item>
           </RouterLink>
-          <RouterLink active-class="" to="/校产管理/实验室管理">
+          <RouterLink active-class="" to="/property/laboratory">
             <a-menu-item key="2_2">实验室管理</a-menu-item>
           </RouterLink>
 
         </a-sub-menu>
+        <a-menu-item key="3">我的账户</a-menu-item>
       </a-menu>
     </a-layout-sider>
+
     <a-layout>
       <a-layout style="padding: 0 24px">
+
         <a-breadcrumb :style="{ margin: '16px 0' }">
-          <a-breadcrumb-item v-for="(item, index) in currentHref" :key="index">{{ item }}</a-breadcrumb-item>
+          <a-breadcrumb-item v-for="(item, index) in currentHref" :key="index">
+            {{ item.split('?')[0] }}
+          </a-breadcrumb-item>
         </a-breadcrumb>
+
 
         <a-layout-content style="height: 100%; width: 100%;">
           <transition name="fade" mode="out-in">
@@ -56,7 +63,6 @@
             </router-view>
           </transition>
         </a-layout-content>
-        <a-layout-footer>Footer</a-layout-footer>
       </a-layout>
     </a-layout>
   </a-layout>

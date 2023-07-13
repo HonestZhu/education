@@ -4,18 +4,27 @@ import { createRouter, createWebHistory } from 'vue-router'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    // {
+    //   path: '/',
+    //   redirect: '/登录'
+    // },
     {
-      path: '/首页',
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/Login.vue')
+    },
+    {
+      path: '/home',
       name: 'home',
       component: () => import('../views/Home.vue')
     },
     {
-      path: '/校产管理/设备管理',
+      path: '/property/equipment',
       name: 'property_equipment',
       component: () => import('../views/property/Equipment.vue')
     },
-        {
-      path: '/校产管理/实验室管理',
+    {
+      path: '/property/laboratory',
       name: 'property_laboratory',
       component: () => import('../views/property/Laboratory.vue')
     },
@@ -29,5 +38,19 @@ const router = createRouter({
     // }
   ]
 })
+
+// 添加全局路由守卫
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = true // 假设用户已经登录
+  if (to.path !== '/login' && !isAuthenticated) {
+    next({
+      path: '/login',
+      query: { redirect: '/home' } // 保存用户原来想要访问的路径，以便在登录后重定向回去
+    })
+  } else {
+    next()
+  }
+})
+
 
 export default router
