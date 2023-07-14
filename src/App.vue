@@ -26,7 +26,7 @@
 
 
         <RouterLink active-class="" to="/student">
-          <a-menu-item key="0"><icon-list />学生管理</a-menu-item>
+          <a-menu-item key="0"><icon-idcard />学生管理</a-menu-item>
         </RouterLink>
         <RouterLink active-class="" to="/teacher">
           <a-menu-item key="1"><icon-list />教师管理</a-menu-item>
@@ -68,6 +68,10 @@
             </router-view>
           </transition>
         </a-layout-content>
+
+        <a-layout-footer>
+          <span class="foot">Code by group 2 王鹏 朱嘉诚 傅胤燊 王超弘</span>
+        </a-layout-footer>
       </a-layout>
     </a-layout>
   </a-layout>
@@ -232,5 +236,11 @@ const logout = async () => {
 
 .logout {
   margin-left: 10px;
+}
+
+.foot {
+  font-size: small;
+  letter-spacing: 1px;
+  color: rgb(42, 41, 41);
 }
 </style>

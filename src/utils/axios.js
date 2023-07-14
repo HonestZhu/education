@@ -21,10 +21,12 @@ axios.interceptors.response.use(response => {
     // 请求成功
     // 1. 根据自己项目需求定制自己的拦截
     // 2. 然后返回数据
+    console.log(response.data);
     return response;
 }, error => {
     // 请求失败
     if (error && error.response) {
+        
         switch (error.response.status) {
             case 400:
                 Message.error('非法请求！')
@@ -40,8 +42,9 @@ axios.interceptors.response.use(response => {
                 Message.error('服务器内部错误！')
                 break
             default:
-                return Promise.reject(error)
+                Message.error('请求失败！')
         }
+        return Promise.reject(new Error(error.response.Message))
     }
 })
 

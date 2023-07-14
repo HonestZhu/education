@@ -1,89 +1,102 @@
 <template>
-    <div class="root">
-        <div class="head">
-            <a-space direction="vertical" :size="16" style="display: block;">
-                <a-row>
-                    <a-col :span="3" class="info">
-                        选中 <span class="digit">{{ selectedKeys.length }}</span> of <span class="digit">{{ data.length
-                        }}</span>
-                    </a-col>
+    <a-spin :loading="loading" tip="数据加载中" dot>
+        <div class="root">
+            <div class="head">
+                <a-space direction="vertical" :size="16" style="display: block;">
+                    <a-row>
+                        <a-col :span="3" class="info">
+                            选中 <span class="digit">{{ selectedKeys.length }}</span> of <span class="digit">{{ data.length
+                            }}</span>
+                        </a-col>
 
-                    <a-col :span="17">
-                    </a-col>
-                    <a-col :span="2">
-                        <a-popconfirm :content="'你确定要删除' + selectedKeys.length + '个数据？'" okText="确认" cancelText="取消"
-                            type="error" @ok="remove">
-                            <a-button type="primary" size="large" status="danger"
-                                :disabled="selectedKeys.length == 0"><icon-delete />&nbsp;&nbsp;删除</a-button>
-                        </a-popconfirm>
-                    </a-col>
-                    <a-col :span="2">
-                        <a-button type="primary" size="large"
-                            @click="add"><icon-plus-circle-fill />&nbsp;&nbsp;添加</a-button>
-                    </a-col>
+                        <a-col :span="17">
+                        </a-col>
+                        <a-col :span="2">
+                            <a-popconfirm :content="'你确定要删除' + selectedKeys.length + '个数据？'" okText="确认" cancelText="取消"
+                                type="error" @ok="remove">
+                                <a-button type="primary" size="large" status="danger"
+                                    :disabled="selectedKeys.length == 0"><icon-delete />&nbsp;&nbsp;删除</a-button>
+                            </a-popconfirm>
+                        </a-col>
+                        <a-col :span="2">
+                            <a-button type="primary" size="large"
+                                @click="add"><icon-plus-circle-fill />&nbsp;&nbsp;添加</a-button>
+                        </a-col>
 
-                </a-row>
-            </a-space>
-        </div>
-        <!-- 显示数据 -->
-        <div class="body">
-            <a-table column-resizable row-key="id" :table-layout-fixed="true" :columns="columns" :data="data"
+                    </a-row>
+                </a-space>
+            </div>
+            <!-- 显示数据 -->
+            <a-table class="body" column-resizable row-key="id" :table-layout-fixed="true" :columns="columns" :data="data"
                 :row-selection="rowSelection" v-model:selectedKeys="selectedKeys" :pagination="pagination">
                 <template #columns>
                     <!-- 动态获取列 -->
                     <a-table-column v-for="(item, index) in columns" :key="index" :title="item.title"
                         :data-index="item.dataIndex" :sortable="item.sortable" align="center">
+                        <template #span>
+                            <span></span>
+                        </template>
+
                     </a-table-column>
                     <!-- 自定义按钮（编辑） -->
-                    <a-table-column title="Optional">
+                    <a-table-column>
                         <template #cell="{ record }">
-                            <a-button type="dashed" @click="edit(record)">编辑</a-button>
+                            <a-button class="btn" shape="circle" @click="view(record)" size="small"><icon-eye /></a-button>
+                            <a-button class="btn" @click="edit(record)">编辑</a-button>
                         </template>
                     </a-table-column>
                 </template>
             </a-table>
+
+            <a-modal v-model:visible="editVisible" @ok="editSubmit" @cancel="editCancel">
+                <template #title>
+                    编辑
+                </template>
+
+                <a-form>
+                    <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
+                        <a-input :placeholder="'请输入' + item.title" v-model="editData[item.dataIndex]"
+                            :disabled="item.dataIndex.includes('id')" v-if="item.dataIndex != 'gender'" />
+                        <a-space direction="vertical" size="large" v-else>
+                            <a-radio-group v-model="editData.gender">
+                                <a-radio value="男">男</a-radio>
+                                <a-radio value="女">女</a-radio>
+                            </a-radio-group>
+                        </a-space>
+                    </a-form-item>
+                </a-form>
+            </a-modal>
+
+
+            <a-modal v-model:visible="addVisible" @ok="addSubmit" @cancel="addCancel">
+                <template #title>
+                    添加
+                </template>
+
+                <a-form>
+                    <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
+                        <a-input :placeholder="'请输入' + item.title" v-model="addData[item.dataIndex]"
+                            :disabled="item.dataIndex.includes('id')" v-if="item.dataIndex != 'gender'" />
+                        <a-space direction="vertical" size="large" v-else>
+                            <a-radio-group v-model="addData.gender">
+                                <a-radio value="男">男</a-radio>
+                                <a-radio value="女">女</a-radio>
+                            </a-radio-group>
+                        </a-space>
+                    </a-form-item>
+                </a-form>
+            </a-modal>
+
+            <a-modal v-model:visible="viewVisible"  @cancel="viewCancle">
+                <template #title>
+                    查看
+                </template>
+
+                <a-descriptions :data="viewData" :title="viewData.name" bordered :column="1" size="large"/>
+            </a-modal>
+
         </div>
-
-        <a-modal v-model:visible="editVisible" @ok="editSubmit" @cancel="editCancel">
-            <template #title>
-                编辑
-            </template>
-
-            <a-form>
-                <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
-                    <a-input :placeholder="'请输入' + item.title" v-model="editData[item.dataIndex]"
-                        :disabled="item.dataIndex.includes('id')" v-if="item.dataIndex != 'gender'" />
-                    <a-space direction="vertical" size="large" v-else>
-                        <a-radio-group v-model="editData.gender">
-                            <a-radio value="男">男</a-radio>
-                            <a-radio value="女">女</a-radio>
-                        </a-radio-group>
-                    </a-space>
-                </a-form-item>
-            </a-form>
-        </a-modal>
-
-
-        <a-modal v-model:visible="addVisible" @ok="addSubmit" @cancel="addCancel">
-            <template #title>
-                添加
-            </template>
-
-            <a-form>
-                <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
-                    <a-input :placeholder="'请输入' + item.title" v-model="addData[item.dataIndex]"
-                        :disabled="item.dataIndex.includes('id')" v-if="item.dataIndex != 'gender'"/>
-                    <a-space direction="vertical" size="large" v-else>
-                        <a-radio-group v-model="addData.gender">
-                            <a-radio value="男">男</a-radio>
-                            <a-radio value="女">女</a-radio>
-                        </a-radio-group>
-                    </a-space>
-                </a-form-item>
-            </a-form>
-        </a-modal>
-
-    </div>
+    </a-spin>
 </template>
 <script setup>
 import { defineProps, reactive, ref, onMounted } from 'vue';
@@ -99,10 +112,13 @@ const selectedKeys = ref([]);
 const pagination = { pageSize: 10 }
 const editVisible = ref(false);
 const addVisible = ref(false);
+const viewVisible = ref(false);
 
 const editData = ref({});
 const addData = ref({});
+const viewData = ref([])
 const data = ref([])
+const loading = ref(true)
 
 const props = defineProps({
     columns: {
@@ -122,6 +138,7 @@ const props = defineProps({
 
 const fetchData = async () => {
     try {
+        loading.value = true
         const response = await get(props.baseUrl);
         console.log(response);
         let t = response.data.data
@@ -132,11 +149,12 @@ const fetchData = async () => {
                 t[i].salary = parseInt(t[i].salary)
         }
         data.value = t
+        loading.value = false
     } catch (error) {
-        Message.error({
-            content: error.message
-        });
-        return null;
+        // Message.error({
+        //     content: error.message
+        // });
+        loading.value = false
     }
 };
 
@@ -155,9 +173,10 @@ const addSubmit = async () => {
             content: '添加成功！'
         });
     } catch (error) {
-        Message.error({
-            content: error.message
-        });
+        // console.log(error.message);
+        // Message.error({
+        //     content: error.message
+        // });
         addVisible.value = false
     }
 };
@@ -179,9 +198,9 @@ const remove = async () => {
         }
 
     } catch (error) {
-        Message.error({
-            content: error.message
-        });
+        // Message.error({
+        //     content: error.message
+        // });
     }
 };
 
@@ -201,9 +220,9 @@ const editSubmit = async () => {
         });
         editVisible.value = false
     } catch (error) {
-        Message.error({
-            content: error.message
-        });
+        // Message.error({
+        //     content: error.message
+        // });
         editVisible.value = false
     }
 };
@@ -211,6 +230,28 @@ const editSubmit = async () => {
 const editCancel = () => {
     editData.value = {}
     editVisible.value = false
+}
+
+const view = (record) => {
+    viewVisible.value = true
+    for(let idx in props.columns) {
+        let t = props.columns[idx]
+        viewData.value.push({
+            label: t.title,
+            value: record[t.dataIndex]
+        })
+    }
+    // for (let key in data)
+    //     viewData.value.push({
+    //         label: key,
+    //         value: data[key]
+    //     })
+
+}
+
+const viewCancle = () => {
+    viewVisible.value = false
+    viewData.value = []
 }
 
 onMounted(() => {
@@ -225,9 +266,9 @@ onMounted(() => {
 }
 
 .head {
-    padding: 10px;
-    height: 50px;
-    line-height: 50px;
+    padding: 12px;
+    height: 60px;
+    line-height: 60px;
 }
 
 .body {
@@ -244,6 +285,10 @@ onMounted(() => {
     font-weight: bolder;
     min-width: 30px;
     margin-left: 5px;
+}
+
+.btn {
+    margin-left: 15px;
 }
 </style>
   

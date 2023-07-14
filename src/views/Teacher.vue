@@ -22,7 +22,7 @@ const columns = [
     },
     {
         title: '学院',
-        dataIndex: 'department'
+        dataIndex: 'departmentId'
     },
     {
         title: '职位',

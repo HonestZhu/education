@@ -24,15 +24,11 @@
                 <div class="overlay-container">
                     <div class="overlay">
                         <div class="overlay-panel overlay-left">
-                            <h1>欢迎回来！</h1>
-                            <p>
-                                Start from where you left
-                            </p>
+                            <h1>欢迎回来</h1>
                             <div class="btn-grad" id="signIn">登录</div>
                         </div>
                         <div class="overlay-panel overlay-right">
-                            <h1>你好！</h1>
-                            <p>Join Us on a new adventure</p>
+                            <h1>你好</h1>
                             <div class="btn-grad" id="signUp">注册</div>
                         </div>
                     </div>
@@ -63,10 +59,22 @@ let registerData = {
 const router = useRouter();
 
 function gotoHome() {
-  router.push('/home');
+    router.push('/home');
 }
 
 const login = async () => {
+    if (loginData.username.length < 3 || loginData.username.length > 15) {
+        Message.error({
+            content: '用户名长度应在3-15之间！'
+        })
+        return
+    }
+    if (loginData.password.length < 5 || loginData.password.length > 15) {
+        Message.error({
+            content: '密码长度应在5-15之间！'
+        })
+        return
+    }
     try {
         const response = await post('user/login', loginData);
         let data = response.data
@@ -100,6 +108,18 @@ const login = async () => {
 
 
 const register = async () => {
+    if (registerData.username.length < 3 || loginData.username.length > 15) {
+        Message.error({
+            content: '用户名长度应在3-15之间！'
+        })
+        return
+    }
+    if (registerData.password.length < 5 || loginData.password.length > 15) {
+        Message.error({
+            content: '密码长度应在5-15之间！'
+        })
+        return
+    }
     try {
         const response = await put('user/register', registerData);
         let data = response.data
