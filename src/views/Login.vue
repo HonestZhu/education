@@ -5,16 +5,16 @@
                 <div class="form-container sign-up-container">
                     <form action="#">
                         <h1>创建账号</h1>
-                        <input type="text" placeholder="账号名" v-model="registerData.userName"/>
-                        <input type="password" placeholder="密码" v-model="registerData.password"/>
+                        <input type="text" placeholder="账号名" v-model="registerData.username" />
+                        <input type="password" placeholder="密码" v-model="registerData.password" />
                         <div class="btn-grad" @click="register">注册</div>
                     </form>
                 </div>
                 <div class="form-container sign-in-container">
                     <form action="#">
                         <h1>登录</h1>
-                        <input type="email" placeholder="账号名" v-model="loginData.userName"/>
-                        <input type="password" placeholder="密码" v-model="loginData.password"/>
+                        <input type="email" placeholder="账号名" v-model="loginData.username" />
+                        <input type="password" placeholder="密码" v-model="loginData.password" />
                         <div class="btn-grad" @click="login">登录</div>
                     </form>
                 </div>
@@ -45,80 +45,140 @@
     
 <script setup>
 import { ref, getCurrentInstance, onMounted, computed, inject } from "vue";
+import { get, post, put } from '../utils/axios'
+import { Message } from "@arco-design/web-vue";
+import { useRouter } from 'vue-router';
 
-const $api = inject('$api')
-const msg = getCurrentInstance().appContext.config.globalProperties.$message
-const nofity = getCurrentInstance().appContext.config.globalProperties.$notification
 
 let loginData = {
-    "userName": '',
+    "username": '',
     "password": ''
 }
 
 let registerData = {
-    "userName": '',
+    "username": '',
     "password": ''
 }
 
-let data = {
-    "id": 1,
-    "userName": "zjc",
-    "nickName": "zjc",
-    "email": "2127075405@qq.com",
-    "phonenumber": "13270901100",
-    "sex": "0",
-    "avatar": null,
-    "userType": "1",
-    "token": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJjYmRlMjc0NzA2ZjY0MGE1OGNiYjU0OWM4Zjg4OWJiNSIsInN1YiI6IjEiLCJpc3MiOiJ6amMiLCJpYXQiOjE2ODU2NzM0NDgsImV4cCI6MTY4Njk2OTQ0OH0.0Aj4GjBsfM6IR2mK3bbP3Ftob7UkTl3kHKgNcbscHfM"
+const router = useRouter();
+
+function gotoHome() {
+  router.push('/home');
 }
 
-function login() {
-    $api.login(loginData).then(res => {
-        if (res.status == 100) {
-            // 更新用户数据和token
-            let user = res.data
-            if(localStorage.getItem('token') != null)
+const login = async () => {
+    try {
+        const response = await post('user/login', loginData);
+        let data = response.data
+        if (data.code == '100') {
+            let token = data.data
+
+            if (localStorage.getItem('token') != null)
                 localStorage.removeItem('token')
-            if(localStorage.getItem('user') != null)
+            if (localStorage.getItem('user') != null)
                 localStorage.removeItem('token')
 
-            localStorage.setItem('token', user.token)
-            delete user.token
-            localStorage.setItem('user', JSON.stringify(user))
-            console.log(localStorage.getItem('user'));
-            nofity.success('成功登录')
+            localStorage.setItem('token', token)
+            localStorage.setItem('user', loginData.username)
+
+            Message.success({
+                content: '登陆成功'
+            })
+            gotoHome()
+            location.reload()
         } else {
-            nofity.error(res.message)
+            Message.error({
+                content: data.info
+            });
         }
-    }).catch(error => {
-        console.log(error);
-        nofity.error(error.message)
-    })
-}
+    } catch (error) {
+        Message.error({
+            content: error.message
+        });
+    }
+};
 
-function register() {
-    $api.register(registerData).then(res => {
-        if (res.status == 100) {
-            // 更新用户数据和token
-            let user = res.data
-            if(localStorage.getItem('token') != null)
+
+const register = async () => {
+    try {
+        const response = await put('user/register', registerData);
+        let data = response.data
+        if (data.code == '100') {
+            let token = data.data
+
+            if (localStorage.getItem('token') != null)
                 localStorage.removeItem('token')
-            if(localStorage.getItem('user') != null)
+            if (localStorage.getItem('user') != null)
                 localStorage.removeItem('token')
 
-            localStorage.setItem('token', user.token)
-            delete user.token
-            localStorage.setItem('user', JSON.stringify(user))
-            console.log(localStorage.getItem('user'));
-            nofity.success('成功注册')
+            localStorage.setItem('token', token)
+            localStorage.setItem('user', registerData.username)
+
+            Message.success({
+                content: '注册成功'
+            })
+            gotoHome()
+            location.reload()
         } else {
-            nofity.error(res.message)
+            Message.error({
+                content: data.info
+            });
         }
-    }).catch(error => {
-        console.log(error);
-        nofity.error(error.message)
-    })
-}
+    } catch (error) {
+        Message.error({
+            content: error.message
+        });
+    }
+};
+
+
+// function login() {
+//     $api.login(loginData).then(res => {
+//         if (res.status == 100) {
+//             // 更新用户数据和token
+//             let user = res.data
+//             if (localStorage.getItem('token') != null)
+//                 localStorage.removeItem('token')
+//             if (localStorage.getItem('user') != null)
+//                 localStorage.removeItem('token')
+
+//             localStorage.setItem('token', user.token)
+//             delete user.token
+//             localStorage.setItem('user', JSON.stringify(user))
+//             console.log(localStorage.getItem('user'));
+//             nofity.success('成功登录')
+//         } else {
+//             nofity.error(res.message)
+//         }
+//     }).catch(error => {
+//         console.log(error);
+//         nofity.error(error.message)
+//     })
+// }
+
+// function register() {
+//     $api.register(registerData).then(res => {
+//         if (res.status == 100) {
+//             // 更新用户数据和token
+//             let user = res.data
+//             if (localStorage.getItem('token') != null)
+//                 localStorage.removeItem('token')
+//             if (localStorage.getItem('user') != null)
+//                 localStorage.removeItem('token')
+
+//             localStorage.setItem('token', user.token)
+//             delete user.token
+//             localStorage.setItem('user', JSON.stringify(user))
+//             console.log(localStorage.getItem('user'));
+//             nofity.success('成功注册')
+//         } else {
+//             nofity.error(res.message)
+//         }
+//     }).catch(error => {
+//         console.log(error);
+//         nofity.error(error.message)
+//     })
+// }
 
 onMounted(() => {
 

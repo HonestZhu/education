@@ -1,6 +1,6 @@
 <template>
     <div class="root">
-        <Detail :columns="columns" baseUrl="laboratory"></Detail>
+        <Detail :columns="columns" baseUrl="student"></Detail>
     </div>
 </template>
 
@@ -17,16 +17,32 @@ const columns = [
         dataIndex: 'id'
     },
     {
-        title: '部门ID',
-        dataIndex: 'departmentId'
-    },
-    {
-        title: '名称',
+        title: '姓名',
         dataIndex: 'name'
     },
     {
-        title: '地址',
-        dataIndex: 'address'
+        title: '性别',
+        dataIndex: 'gender'
+    },
+    {
+        title: '手机号',
+        dataIndex: 'phone',
+    },
+    {
+        title: '部门ID',
+        dataIndex: 'departmentId',
+    },
+    {
+        title: '年纪',
+        dataIndex: 'grade',
+    },
+    {
+        title: '班级',
+        dataIndex: 'clazz'
+    },
+    {
+        title: '宿舍',
+        dataIndex: 'dormitory'
     }
 ]
 

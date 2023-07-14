@@ -1,0 +1,24 @@
+{
+    "info": "100",
+    "code": "查询成功",
+    "data": [
+        {
+            "id": "39286121",
+            "name": "芙蓉王源",
+            "gender": 0,
+            "department": "抽烟学院",
+            "job": "rapper",
+            "phone": "114514",
+            "salary": "114514"
+        },
+        {
+            "id": "39286137",
+            "name": "芙蓉王源",
+            "gender": 0,
+            "department": "抽烟学院",
+            "job": "rapper",
+            "phone": "114514",
+            "salary": "114514"
+        }
+    ]
+}

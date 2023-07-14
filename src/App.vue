@@ -12,8 +12,8 @@
             src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp" />
         </a-avatar>
         <div class="line">
-          <div class="username">username</div>
-          <a-button class="logout" type="primary" shape="circle" size="small">
+          <div class="username">{{ username }}</div>
+          <a-button class="logout" type="primary" shape="circle" size="small" @click="logout">
             <icon-export />
           </a-button>
         </div>
@@ -22,17 +22,12 @@
 
 
       <a-menu @menuItemClick="onClickMenuItem" :accordion="true">
-        <a-sub-menu key="0">
-          <template #title>
-            <icon-apps></icon-apps><span>学生管理</span>
-          </template>
-          <a-menu-item key="0_1">学籍管理</a-menu-item>
-          <a-menu-item key="0_2">成长信息记录</a-menu-item>
-          <RouterLink active-class="" to="/student/handbook">
-            <a-menu-item key="0_3">成长手册</a-menu-item>
-          </RouterLink>
 
-        </a-sub-menu>
+
+
+        <RouterLink active-class="" to="/student">
+          <a-menu-item key="0"><icon-list />学生管理</a-menu-item>
+        </RouterLink>
         <RouterLink active-class="" to="/teacher">
           <a-menu-item key="1"><icon-list />教师管理</a-menu-item>
         </RouterLink>
@@ -47,8 +42,11 @@
           <RouterLink active-class="" to="/property/laboratory">
             <a-menu-item key="2_2">实验室管理</a-menu-item>
           </RouterLink>
-
         </a-sub-menu>
+
+        <RouterLink active-class="" to="/student/handbook">
+          <a-menu-item key="3"><icon-search />成长手册</a-menu-item>
+        </RouterLink>
 
       </a-menu>
     </a-layout-sider>
@@ -77,6 +75,8 @@
 <script setup>
 import { defineComponent, ref, computed } from 'vue';
 import { RouterLink, useRoute } from "vue-router";
+import { Message } from '@arco-design/web-vue';
+import { get } from './utils/axios';
 
 import {
   IconHome,
@@ -93,9 +93,44 @@ const currentHref = computed(() => {
   return route.fullPath.split('/')
 });
 const isLogin = computed(() => {
-  let token = localStorage.getItem('Authorization') 
+  let token = localStorage.getItem('token')
   return token != null && token.length > 0
 })
+
+const username = computed(() => {
+  let user = localStorage.getItem('user')
+  return user
+})
+
+const logout = async () => {
+  try {
+    const response = await get('user/logout');
+    let data = response.data
+    console.log(data);
+    if (data.code == '100') {
+
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+
+      Message.success({
+        content: '退出成功'
+      })
+
+      setTimeout(() => location.reload(), 1000);
+
+
+
+    } else {
+      Message.error({
+        content: data.info
+      });
+    }
+  } catch (error) {
+    Message.error({
+      content: error.message
+    });
+  }
+};
 </script>
 <style scoped>
 .title {
@@ -188,11 +223,13 @@ const isLogin = computed(() => {
   font-size: 16px;
   letter-spacing: 1px;
 }
+
 .username {
   display: inline-block;
   width: 100px;
   user-select: none;
 }
+
 .logout {
   margin-left: 10px;
 }

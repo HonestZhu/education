@@ -19,6 +19,11 @@ const router = createRouter({
       component: () => import('../views/Home.vue')
     },
     {
+      path: '/student',
+      name: 'student',
+      component: () => import('../views/student/Student.vue')
+    },
+    {
       path: '/student/handbook',
       name: 'student_handbook',
       component: () => import('../views/student/Handbook.vue')
@@ -51,15 +56,20 @@ const router = createRouter({
 
 // 添加全局路由守卫
 router.beforeEach((to, from, next) => {
-  let token = localStorage.getItem('Authorization')
+  let token = localStorage.getItem('token')
+
   // const isAuthenticated = token // 假设用户已经登录
   let isAuthenticated = true
-  if (to.path !== '/login' && !isAuthenticated) {
+  if (to.path !== '/login' && !token) {
     next({
       path: '/login',
       query: { redirect: '/home' } // 保存用户原来想要访问的路径，以便在登录后重定向回去
     })
-  } else {
+  } 
+  if (to.path == '/login' && token) {
+    next({path: '/home'})
+  }
+  else {
     next()
   }
 })
