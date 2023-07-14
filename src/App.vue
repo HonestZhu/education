@@ -1,38 +1,45 @@
 <template>
   <a-layout class="layout-demo">
-    <a-layout-sider theme="dark" breakpoint="lg" :width="250" collapsible :collapsed="collapsed" @collapse="onCollapse">
+    <a-layout-sider theme="dark" breakpoint="lg" :width="200" :collapsed="collapsed" @collapse="onCollapse">
       <!-- <div class="logo" /> -->
       <RouterLink class="title" to="/home">
-        <div>教育局综合信息服务平台</div>
+        <div>教育管理系统</div>
       </RouterLink>
 
+      <div class="my" v-show="isLogin">
+        <a-avatar trigger-type="mask" :size="140">
+          <img alt="avatar"
+            src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp" />
+        </a-avatar>
+        <div class="line">
+          <div class="username">username</div>
+          <a-button class="logout" type="primary" shape="circle" size="small">
+            <icon-export />
+          </a-button>
+        </div>
+      </div>
 
 
-      <a-menu @menuItemClick="onClickMenuItem">
+
+      <a-menu @menuItemClick="onClickMenuItem" :accordion="true">
         <a-sub-menu key="0">
           <template #title>
-            <span>学生管理</span>
+            <icon-apps></icon-apps><span>学生管理</span>
           </template>
           <a-menu-item key="0_1">学籍管理</a-menu-item>
           <a-menu-item key="0_2">成长信息记录</a-menu-item>
-          <a-menu-item key="0_3">成长手册</a-menu-item>
+          <RouterLink active-class="" to="/student/handbook">
+            <a-menu-item key="0_3">成长手册</a-menu-item>
+          </RouterLink>
+
         </a-sub-menu>
-        <a-menu-item key="1">教师管理</a-menu-item>
-        <!-- <a-sub-menu key="1">
-          <template #title>
-            <span>教师管理</span>
-          </template>
-          <a-menu-item key="1_1">教师信息管理</a-menu-item>
-          <a-menu-item key="1_2">机构编制管理</a-menu-item>
-          <a-menu-item key="1_3">工资福利管理</a-menu-item>
-          <a-menu-item key="1_4">职称管理</a-menu-item>
-          <a-menu-item key="1_5">异动管理</a-menu-item>
-          <a-menu-item key="1_6">绩效考核</a-menu-item>
-          <a-menu-item key="1_7">统计查询</a-menu-item>
-        </a-sub-menu> -->
+        <RouterLink active-class="" to="/teacher">
+          <a-menu-item key="1"><icon-list />教师管理</a-menu-item>
+        </RouterLink>
+
         <a-sub-menu key="2">
           <template #title>
-            <span>校产管理</span>
+            <icon-apps></icon-apps><span>校产管理</span>
           </template>
           <RouterLink active-class="" to="/property/equipment">
             <a-menu-item key="2_1">设备管理</a-menu-item>
@@ -42,7 +49,7 @@
           </RouterLink>
 
         </a-sub-menu>
-        <a-menu-item key="3">我的账户</a-menu-item>
+
       </a-menu>
     </a-layout-sider>
 
@@ -85,6 +92,10 @@ const route = useRoute();
 const currentHref = computed(() => {
   return route.fullPath.split('/')
 });
+const isLogin = computed(() => {
+  let token = localStorage.getItem('Authorization') 
+  return token != null && token.length > 0
+})
 </script>
 <style scoped>
 .title {
@@ -92,10 +103,11 @@ const currentHref = computed(() => {
   font-weight: bolder;
   line-height: 60px;
   text-align: center;
-  width: 250px;
+  width: 180px;
   font-size: 20px;
   letter-spacing: 1px;
   text-decoration: none;
+  display: block;
 }
 
 .title:hover {
@@ -158,5 +170,30 @@ const currentHref = computed(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.my {
+  padding-top: 20px;
+  text-align: center;
+  height: 200px;
+  background-color: #353843;
+}
+
+.line {
+  line-height: 60px;
+  width: 200px;
+  /* margin-top: 10px; */
+  color: white;
+  font-weight: bolder;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+.username {
+  display: inline-block;
+  width: 100px;
+  user-select: none;
+}
+.logout {
+  margin-left: 10px;
 }
 </style>

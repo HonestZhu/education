@@ -222,7 +222,7 @@ input {
 
 /*  */
 .body-container {
-    height: calc(100vh - 110px);
+    height: calc(100vh - 80px);
     display: flex;
     justify-content: center;
     align-items: center;

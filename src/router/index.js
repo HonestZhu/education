@@ -19,6 +19,16 @@ const router = createRouter({
       component: () => import('../views/Home.vue')
     },
     {
+      path: '/student/handbook',
+      name: 'student_handbook',
+      component: () => import('../views/student/Handbook.vue')
+    },
+    {
+      path: '/teacher',
+      name: 'teacher',
+      component: () => import('../views/Teacher.vue')
+    },
+    {
       path: '/property/equipment',
       name: 'property_equipment',
       component: () => import('../views/property/Equipment.vue')
@@ -27,7 +37,7 @@ const router = createRouter({
       path: '/property/laboratory',
       name: 'property_laboratory',
       component: () => import('../views/property/Laboratory.vue')
-    },
+    }
     // {
     //   path: '/about',
     //   name: 'about',
@@ -41,7 +51,9 @@ const router = createRouter({
 
 // 添加全局路由守卫
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = true // 假设用户已经登录
+  let token = localStorage.getItem('Authorization')
+  // const isAuthenticated = token // 假设用户已经登录
+  let isAuthenticated = true
   if (to.path !== '/login' && !isAuthenticated) {
     next({
       path: '/login',

@@ -4,20 +4,23 @@
             <a-space direction="vertical" :size="16" style="display: block;">
                 <a-row>
                     <a-col :span="3" class="info">
-                        选中 <span class="digit">{{ selectedKeys.length }}</span> of  <span class="digit">{{ data.length }}</span>
+                        选中 <span class="digit">{{ selectedKeys.length }}</span> of <span class="digit">{{ data.length
+                        }}</span>
                     </a-col>
 
                     <a-col :span="17">
                     </a-col>
-
+                    <a-col :span="2">
+                        <a-popconfirm :content="'你确定要删除' + selectedKeys.length + '个数据？'" okText="确认" cancelText="取消">
+                            <a-button type="primary" size="large" status="danger"
+                                @click="del" :disabled="selectedKeys.length == 0"><icon-delete />&nbsp;&nbsp;删除</a-button>
+                        </a-popconfirm>
+                    </a-col>
                     <a-col :span="2">
                         <a-button type="primary" size="large"
                             @click="add"><icon-plus-circle-fill />&nbsp;&nbsp;添加</a-button>
                     </a-col>
-                    <a-col :span="2">
-                        <a-button type="primary" size="large" status="danger"
-                            @click="del"><icon-delete />&nbsp;&nbsp;删除</a-button>
-                    </a-col>
+
                 </a-row>
             </a-space>
         </div>
@@ -45,24 +48,22 @@
                 编辑
             </template>
 
-            <a-form >
-                <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" 
-                    :label="item.title">
-                    <a-input  :placeholder="'请输入' + item.dataIndex" v-model="editData[item.dataIndex]"/>
+            <a-form>
+                <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
+                    <a-input :placeholder="'请输入' + item.dataIndex" v-model="editData[item.dataIndex]" />
                 </a-form-item>
             </a-form>
         </a-modal>
 
-        
+
         <a-modal v-model:visible="addVisible" @ok="addSubmit" @cancel="addCancel">
             <template #title>
                 添加
             </template>
 
-            <a-form >
-                <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" 
-                    :label="item.title">
-                    <a-input  :placeholder="'请输入' + item.dataIndex" v-model="addData[item.dataIndex]"/>
+            <a-form>
+                <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
+                    <a-input :placeholder="'请输入' + item.dataIndex" v-model="addData[item.dataIndex]" />
                 </a-form-item>
             </a-form>
         </a-modal>
@@ -71,6 +72,7 @@
 </template>
 <script setup>
 import { defineProps, reactive, ref } from 'vue';
+import { Message } from '@arco-design/web-vue';
 
 const rowSelection = reactive({
     type: 'checkbox',
@@ -78,7 +80,7 @@ const rowSelection = reactive({
     onlyCurrent: false
 });
 const selectedKeys = ref([]);
-const pagination = { pageSize: 16 }
+const pagination = { pageSize: 10 }
 const editVisible = ref(false);
 const addVisible = ref(false);
 
@@ -111,6 +113,7 @@ const addCancel = () => {
 
 
 const del = () => {
+
     console.log(selectedKeys.value);
 }
 
