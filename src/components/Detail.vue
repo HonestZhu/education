@@ -4,12 +4,38 @@
             <div class="head">
                 <a-space direction="vertical" :size="16" style="display: block;">
                     <a-row>
-                        <a-col :span="3" class="info">
-                            选中 <span class="digit">{{ selectedKeys.length }}</span> of <span class="digit">{{ data.length
-                            }}</span>
+                        <a-col :span="8">
+                            <a-space direction="vertical" size="large">
+                                <a-input-group>
+                                    <a-select v-model="options" :style="{ width: '160px' }" value-key="title"
+                                        placeholder="查询条件">
+                                        <a-option v-for="item of columns" :key="item.dataIndex" :value="item.dataIndex"
+                                            :label="item.title" />
+                                    </a-select>
+                                    <a-input-search search-button @search="fetchDataByCondition" v-model="condition" />
+                                </a-input-group>
+                            </a-space>
+
                         </a-col>
 
-                        <a-col :span="17">
+                        <a-col :span="1">
+                            <a-button status="danger" shape="circle" @click="fetchData">
+                                <icon-loop />
+                            </a-button>
+                        </a-col>
+                        <a-col :span="1">
+                        </a-col>
+                        <a-col :span="7" class="info">
+                            <!-- 选中 <span class="digit">{{ selectedKeys.length }}</span> of <span class="digit">{{ data.length
+                            }}</span> -->
+                            <a-progress :percent="selectedKeys.length > 0 ? selectedKeys.length / data.length : 0"
+                                :style="{ width: '100%' }" :show-text="false">
+                            </a-progress>
+                        </a-col>
+                        <a-col :span="1">
+                        </a-col>
+                        <a-col :span="2">
+                            <a-button size="large" status="success" @click="search">高级查询</a-button>
                         </a-col>
                         <a-col :span="2">
                             <a-popconfirm :content="'你确定要删除' + selectedKeys.length + '个数据？'" okText="确认" cancelText="取消"
@@ -28,7 +54,8 @@
             </div>
             <!-- 显示数据 -->
             <a-table class="body" column-resizable row-key="id" :table-layout-fixed="true" :columns="columns" :data="data"
-                :row-selection="rowSelection" v-model:selectedKeys="selectedKeys" :pagination="pagination">
+                :row-selection="rowSelection" v-model:selectedKeys="selectedKeys" :pagination="pagination"
+                :virtual-list-props="{ height: 480 }">
                 <template #columns>
                     <!-- 动态获取列 -->
                     <a-table-column v-for="(item, index) in columns" :key="index" :title="item.title"
@@ -103,6 +130,28 @@
                 <a-descriptions :data="viewData" :title="viewData.name" bordered :column="1" size="large" />
             </a-modal>
 
+            <a-modal v-model:visible="searchVisible" @ok="selectData" @cancel="searchCancel">
+                <template #title>
+                    高级查询
+                </template>
+
+                <a-form>
+                    <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
+                        <a-input :placeholder="'请输入' + item.title" v-model="searchData[item.dataIndex]"
+                            v-if="item.dataIndex != 'gender' && item.dataIndex != 'departmentId'" />
+                        <a-space direction="vertical" size="large" v-else-if="item.dataIndex == 'gender'">
+                            <a-radio-group v-model="searchData.gender">
+                                <a-radio value="男">男</a-radio>
+                                <a-radio value="女">女</a-radio>
+                            </a-radio-group>
+                        </a-space>
+                        <a-select v-else v-model="searchData.departmentId" placeholder="请选择学院">
+                            <a-option v-for="dep of departments" :key="dep.id" :value="dep.id" :label="dep.name" />
+                        </a-select>
+                    </a-form-item>
+                </a-form>
+            </a-modal>
+
         </div>
     </a-spin>
 </template>
@@ -118,16 +167,25 @@ const rowSelection = reactive({
 });
 const selectedKeys = ref([]);
 const pagination = { pageSize: 10 }
+// 四个对话框是否可见
 const editVisible = ref(false);
 const addVisible = ref(false);
 const viewVisible = ref(false);
+const searchVisible = ref(false);
 
+// 对话框中会用到的数据
 const editData = ref({});
 const addData = ref({});
-const viewData = ref([])
+const viewData = ref([]);
+const searchData = ref({});
+
 const data = ref([])
 const loading = ref(true)
 const departments = ref({})
+
+// 单条件查询
+const options = ref([])
+const condition = ref('')
 
 const props = defineProps({
     columns: {
@@ -166,6 +224,37 @@ const fetchData = async () => {
         loading.value = false
     }
 };
+
+
+const fetchDataByCondition = async () => {
+    try {
+        if (condition.value == null || condition.value.length == 0 || options.value == null) {
+            Message.error({
+                content: '查询条件不能为空！'
+            });
+            return
+        }
+        loading.value = true
+        let param = {}
+        param[options.value] = condition.value
+        const response = await post(props.baseUrl + '/like', param);
+        console.log(response);
+        let t = response.data.data
+        for (let i = 0; i < t.length; i++) {
+            if (t[i].hasOwnProperty('gender'))
+                t[i].gender = t[i].gender ? '女' : '男'
+            if (t[i].hasOwnProperty('salary'))
+                t[i].salary = parseInt(t[i].salary)
+        }
+        data.value = t
+        loading.value = false
+    } catch (error) {
+        // Message.error({
+        //     content: error.message
+        // });
+        loading.value = false
+    }
+}
 
 const add = () => {
     addVisible.value = true
@@ -283,6 +372,35 @@ const getAllDepartment = async (id) => {
     }
 }
 
+const search = () => {
+    searchVisible.value = true
+}
+
+const selectData = async () => {
+    try {
+        loading.value = true
+        const response = await post(props.baseUrl + '/like', searchData.value);
+        console.log(response);
+        let t = response.data.data
+        for (let i = 0; i < t.length; i++) {
+            if (t[i].hasOwnProperty('gender'))
+                t[i].gender = t[i].gender ? '女' : '男'
+            if (t[i].hasOwnProperty('salary'))
+                t[i].salary = parseInt(t[i].salary)
+        }
+        data.value = t
+        loading.value = false
+    } catch (error) {
+        loading.value = false
+    }
+}
+
+const searchCancel = () => {
+    searchData.value = {}
+    searchVisible.value = false
+}
+
+
 onMounted(() => {
     fetchData()
     getAllDepartment()
@@ -302,7 +420,8 @@ onMounted(() => {
 }
 
 .body {
-    height: calc(100% - 70px);
+    /* min-height: 570px; */
+    /* height: 570px; */
 }
 
 .info {
@@ -314,7 +433,7 @@ onMounted(() => {
     font-size: 20px;
     font-weight: bolder;
     min-width: 30px;
-    margin-left: 5px;
+    margin-left: 2px;
 }
 
 .btn {

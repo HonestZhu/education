@@ -29,8 +29,12 @@ const columns = [
         dataIndex: 'phone',
     },
     {
-        title: '所属学院',
-        dataIndex: 'departmentId',
+        title: '学院ID',
+        dataIndex: 'departmentId'
+    },
+    {
+        title: '学院名称',
+        dataIndex: 'departmentName'
     },
     {
         title: '年级',

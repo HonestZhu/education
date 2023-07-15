@@ -10,6 +10,8 @@
         <a-avatar trigger-type="mask" :size="140">
           <img alt="avatar"
             src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp" />
+            <!-- <img alt="avatar"
+            src="https://img.wxcha.com/m00/b0/0d/af33b6088d506a14a2822c5a16ee69b6.jpg?down" /> -->
         </a-avatar>
         <div class="line">
           <div class="username">{{ username }}</div>
