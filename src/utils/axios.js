@@ -34,6 +34,8 @@ axios.interceptors.response.use(response => {
             case 401:
                 Message.error('请先登录！')
                 localStorage.removeItem('token')
+                localStorage.removeItem('user')
+                location.reload()
                 break
             case 404:
                 Message.error('资源不存在！')

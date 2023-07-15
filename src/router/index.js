@@ -42,6 +42,11 @@ const router = createRouter({
       path: '/property/laboratory',
       name: 'property_laboratory',
       component: () => import('../views/property/Laboratory.vue')
+    },
+    {
+      path: '/department',
+      name: 'department',
+      component: () => import('../views/Department.vue')
     }
     // {
     //   path: '/about',

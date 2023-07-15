@@ -44,8 +44,13 @@
           </RouterLink>
         </a-sub-menu>
 
+        <RouterLink active-class="" to="/department">
+          <a-menu-item key="3"><icon-common />部门管理</a-menu-item>
+        </RouterLink>
+
+
         <RouterLink active-class="" to="/student/handbook">
-          <a-menu-item key="3"><icon-search />成长手册</a-menu-item>
+          <a-menu-item key="4"><icon-search />成长手册</a-menu-item>
         </RouterLink>
 
       </a-menu>
@@ -120,7 +125,7 @@ const logout = async () => {
         content: '退出成功'
       })
 
-      setTimeout(() => location.reload(), 1000);
+      setTimeout(() => location.reload(), 500);
 
 
 

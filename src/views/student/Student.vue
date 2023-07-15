@@ -29,11 +29,11 @@ const columns = [
         dataIndex: 'phone',
     },
     {
-        title: '部门ID',
+        title: '所属学院',
         dataIndex: 'departmentId',
     },
     {
-        title: '年纪',
+        title: '年级',
         dataIndex: 'grade',
     },
     {

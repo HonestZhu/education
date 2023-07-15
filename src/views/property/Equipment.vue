@@ -1,6 +1,7 @@
 <template>
     <div class="root">
         <Detail :columns="columns" baseUrl="equipment"></Detail>
+        <!-- <EquipmentCard :data="data[0]"></EquipmentCard> -->
     </div>
 </template>
 
@@ -8,6 +9,7 @@
 import { ref, onMounted, h } from 'vue';
 import { get, post } from '../../utils/axios';
 import { IconSearch } from '@arco-design/web-vue/es/icon';
+import EquipmentCard from '../../components/EquipmentCard.vue'
 
 const data = ref([])
 
@@ -17,8 +19,8 @@ const columns = [
         dataIndex: 'id'
     },
     {
-        title: '实验室ID',
-        dataIndex: 'labId'
+        title: '所属学院',
+        dataIndex: 'departmentId'
     },
     {
         title: '名称',
@@ -45,6 +47,19 @@ const columns = [
     }
 ]
 
+const fetchData = async () => {
+    try {
+        const response = await get('equipment');
+        data.value = response.data.data
+        console.log(data.value);
+    } catch (error) {
+        // Message.error({
+        //     content: error.message
+        // });
+        loading.value = false
+    }
+};
+
 onMounted(() => {
 });
 </script>
@@ -53,6 +68,7 @@ onMounted(() => {
 .root {
     width: 100%;
     height: 100%;
+    display: flex;
 }
 </style>
   

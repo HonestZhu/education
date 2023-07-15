@@ -42,7 +42,7 @@
                     <a-table-column>
                         <template #cell="{ record }">
                             <a-button class="btn" shape="circle" @click="view(record)" size="small"><icon-eye /></a-button>
-                            <a-button class="btn" @click="edit(record)">编辑</a-button>
+                            <a-button class="btn" shape="circle" @click="edit(record)" size="small"><icon-edit /></a-button>
                         </template>
                     </a-table-column>
                 </template>
@@ -56,13 +56,17 @@
                 <a-form>
                     <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
                         <a-input :placeholder="'请输入' + item.title" v-model="editData[item.dataIndex]"
-                            :disabled="item.dataIndex.includes('id')" v-if="item.dataIndex != 'gender'" />
-                        <a-space direction="vertical" size="large" v-else>
+                            :disabled="item.dataIndex.includes('id') && baseUrl != 'student'"
+                            v-if="item.dataIndex != 'gender' && item.dataIndex != 'departmentId'" />
+                        <a-space direction="vertical" size="large" v-else-if="item.dataIndex == 'gender'">
                             <a-radio-group v-model="editData.gender">
                                 <a-radio value="男">男</a-radio>
                                 <a-radio value="女">女</a-radio>
                             </a-radio-group>
                         </a-space>
+                        <a-select v-else v-model="editData.departmentId" placeholder="请选择学院">
+                            <a-option v-for="dep of departments" :key="dep.id" :value="dep.id" :label="dep.name" />
+                        </a-select>
                     </a-form-item>
                 </a-form>
             </a-modal>
@@ -76,23 +80,27 @@
                 <a-form>
                     <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
                         <a-input :placeholder="'请输入' + item.title" v-model="addData[item.dataIndex]"
-                            :disabled="item.dataIndex.includes('id')" v-if="item.dataIndex != 'gender'" />
-                        <a-space direction="vertical" size="large" v-else>
+                            :disabled="item.dataIndex.includes('id') && baseUrl != 'student'"
+                            v-if="item.dataIndex != 'gender' && item.dataIndex != 'departmentId'" />
+                        <a-space direction="vertical" size="large" v-else-if="item.dataIndex == 'gender'">
                             <a-radio-group v-model="addData.gender">
                                 <a-radio value="男">男</a-radio>
                                 <a-radio value="女">女</a-radio>
                             </a-radio-group>
                         </a-space>
+                        <a-select v-else v-model="editData.departmentId" placeholder="请选择学院">
+                            <a-option v-for="dep of departments" :key="dep.id" :value="dep.id" :label="dep.name" />
+                        </a-select>
                     </a-form-item>
                 </a-form>
             </a-modal>
 
-            <a-modal v-model:visible="viewVisible"  @cancel="viewCancle">
+            <a-modal v-model:visible="viewVisible" @cancel="viewCancle">
                 <template #title>
                     查看
                 </template>
 
-                <a-descriptions :data="viewData" :title="viewData.name" bordered :column="1" size="large"/>
+                <a-descriptions :data="viewData" :title="viewData.name" bordered :column="1" size="large" />
             </a-modal>
 
         </div>
@@ -119,6 +127,7 @@ const addData = ref({});
 const viewData = ref([])
 const data = ref([])
 const loading = ref(true)
+const departments = ref({})
 
 const props = defineProps({
     columns: {
@@ -232,20 +241,32 @@ const editCancel = () => {
     editVisible.value = false
 }
 
-const view = (record) => {
-    viewVisible.value = true
-    for(let idx in props.columns) {
+const view = async (record) => {
+
+    for (let idx in props.columns) {
         let t = props.columns[idx]
         viewData.value.push({
             label: t.title,
             value: record[t.dataIndex]
         })
+        if (t.dataIndex == 'departmentId') {
+            try {
+                const resp = await get(`department\\${record.departmentId}`);
+                viewData.value.push({
+                    label: '学院名称',
+                    value: resp.data.data.name
+                })
+                viewData.value.push({
+                    label: '学院地址',
+                    value: resp.data.data.address
+                })
+            } catch (error) {
+            }
+        }
+
+
     }
-    // for (let key in data)
-    //     viewData.value.push({
-    //         label: key,
-    //         value: data[key]
-    //     })
+    viewVisible.value = true
 
 }
 
@@ -254,8 +275,17 @@ const viewCancle = () => {
     viewData.value = []
 }
 
+const getAllDepartment = async (id) => {
+    try {
+        const response = await get('department');
+        departments.value = response.data.data
+    } catch (error) {
+    }
+}
+
 onMounted(() => {
     fetchData()
+    getAllDepartment()
 });
 
 </script>
@@ -288,7 +318,7 @@ onMounted(() => {
 }
 
 .btn {
-    margin-left: 15px;
+    margin-left: 10px;
 }
 </style>
   

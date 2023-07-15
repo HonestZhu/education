@@ -21,8 +21,8 @@ const columns = [
         dataIndex: 'name'
     },
     {
-        title: '学院',
-        dataIndex: 'departmentId'
+        title: '所属学院',
+        dataIndex: 'departmentId',
     },
     {
         title: '职位',
