@@ -66,8 +66,8 @@
 
                     </a-table-column>
                     <!-- 自定义按钮（编辑） -->
-                    <a-table-column>
-                        <template #cell="{ record }">
+                    <a-table-column> 
+                        <template #cell="{ record }" >
                             <a-button class="btn" shape="circle" @click="view(record)" size="small"><icon-eye /></a-button>
                             <a-button class="btn" shape="circle" @click="edit(record)" size="small"><icon-edit /></a-button>
                         </template>
@@ -166,7 +166,7 @@ const rowSelection = reactive({
     onlyCurrent: false
 });
 const selectedKeys = ref([]);
-const pagination = { pageSize: 10 }
+const pagination = { pageSize: 15 }
 // 四个对话框是否可见
 const editVisible = ref(false);
 const addVisible = ref(false);
