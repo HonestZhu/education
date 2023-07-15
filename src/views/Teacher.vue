@@ -24,10 +24,10 @@ const columns = [
         title: '学院ID',
         dataIndex: 'departmentId'
     },
-    {
-        title: '学院名称',
-        dataIndex: 'departmentName'
-    },
+    // {
+    //     title: '学院名称',
+    //     dataIndex: 'departmentName'
+    // },
     {
         title: '职位',
         dataIndex: 'job',

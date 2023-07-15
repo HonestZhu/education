@@ -53,51 +53,109 @@
                     </a-row>
                 </a-space>
             </div>
-            <!-- 显示数据 -->
-            <a-table class="body" column-resizable row-key="id" :table-layout-fixed="true" :data="data"
-                :row-selection="rowSelection" v-model:selectedKeys="selectedKeys" :pagination="pagination"
-                :virtual-list-props="{ height: '72vh' }">
-                <template #columns>
-                    <!-- 动态获取列 -->
-                    <a-table-column v-for="(item, index) in columnsWithDepName" :key="index" :title="item.title"
-                        :data-index="item.dataIndex" :sortable="item.sortable" align="center">
-                        <template #span>
-                            <span></span>
-                        </template>
 
-                    </a-table-column>
-                    <!-- 自定义按钮（编辑） -->
-                    <a-table-column>
-                        <template #cell="{ record }">
-                            <a-button class="btn" shape="circle" @click="view(record)" size="small"><icon-eye /></a-button>
-                            <a-button class="btn" shape="circle" @click="edit(record)" size="small"><icon-edit /></a-button>
-                        </template>
-                    </a-table-column>
-                </template>
-            </a-table>
 
-            <a-modal v-model:visible="editVisible" @ok="editSubmit" @cancel="editCancel">
-                <template #title>
-                    编辑
-                </template>
+            <a-space direction="vertical" :size="16" style="display: block;">
+                <a-row>
+                    <a-col :span="8">
+                        <a-table class="body" column-resizable row-key="id" :table-layout-fixed="true" :data="data"
+                            :row-selection="rowSelection" v-model:selectedKeys="selectedKeys" :pagination="pagination"
+                            :virtual-list-props="{ height: '72vh' }">
+                            <template #columns>
+                                <!-- 动态获取列 -->
+                                <a-table-column v-for="(item, index) in shortColumns" :key="index" :title="item.title"
+                                    :data-index="item.dataIndex" :sortable="item.sortable" align="center">
+                                    <template #span>
+                                        <span></span>
+                                    </template>
 
-                <a-form>
-                    <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
-                        <a-input :placeholder="'请输入' + item.title" v-model="editData[item.dataIndex]"
-                            :disabled="item.dataIndex.includes('id') && baseUrl != 'student'"
-                            v-if="item.dataIndex != 'gender' && item.dataIndex != 'departmentId'" />
-                        <a-space direction="vertical" size="large" v-else-if="item.dataIndex == 'gender'">
-                            <a-radio-group v-model="editData.gender">
-                                <a-radio value="男">男</a-radio>
-                                <a-radio value="女">女</a-radio>
-                            </a-radio-group>
+                                </a-table-column>
+                                <!-- 自定义按钮（编辑） -->
+                                <a-table-column title="Options">
+                                    <template #cell="{ record }">
+                                        <a-button class="btn" @click="choose(record)" size="small"><icon-edit /></a-button>
+                                    </template>
+                                </a-table-column>
+                            </template>
+                        </a-table>
+                    </a-col>
+                    <a-col :span="1">
+                    </a-col>
+                    <a-col :span="15">
+                        <a-space :size="16" style="display: block;">
+                            <a-row>
+                                <a-col :span="8">
+                                    <a-card :style="{ width: '52vw' }" :title="student.name ? student.name : '未选中学生'">
+                                        <template #extra>
+                                            <a-button @click="editSubmit">提交编辑</a-button>
+                                        </template>
+                                        <div>
+                                            <a-form :model="form">
+                                                <a-row :gutter="16">
+                                                    <a-col :span="6">
+                                                        <a-form-item field="id" label="ID">
+                                                            <a-input v-model="student.id" />
+                                                        </a-form-item>
+                                                    </a-col>
+                                                    <a-col :span="6">
+                                                        <a-form-item field="name" label="姓名">
+                                                            <a-input v-model="student.name" />
+                                                        </a-form-item>
+                                                    </a-col>
+                                                    <a-col :span="6">
+                                                        <a-form-item field="gender" label="性别">
+                                                            <a-space direction="vertical" size="large">
+                                                                <a-radio-group v-model="student.gender">
+                                                                    <a-radio value="男">男</a-radio>
+                                                                    <a-radio value="女">女</a-radio>
+                                                                </a-radio-group>
+                                                            </a-space>
+                                                        </a-form-item>
+                                                    </a-col>
+                                                    <a-col :span="6">
+                                                        <a-form-item field="phone" label="手机">
+                                                            <a-input v-model="student.phone" />
+                                                        </a-form-item>
+                                                    </a-col>
+                                                </a-row>
+                                                <a-row :gutter="16">
+                                                    <a-col :span="6">
+                                                        <a-form-item field="departmentId" label="学院">
+                                                            <a-select v-model="student.departmentId" placeholder="请选择学院"
+                                                                :disabled="student.departmentId == null">
+                                                                <a-option v-for="dep of departments" :key="dep.id"
+                                                                    :value="dep.id" :label="dep.name" />
+                                                            </a-select>
+                                                        </a-form-item>
+                                                    </a-col>
+                                                    <a-col :span="6">
+                                                        <a-form-item field="grade" label="年级">
+                                                            <a-input v-model="student.grade" />
+                                                        </a-form-item>
+                                                    </a-col>
+                                                    <a-col :span="6">
+                                                        <a-form-item field="clazz" label="班级">
+                                                            <a-input v-model="student.clazz" />
+                                                        </a-form-item>
+                                                    </a-col>
+                                                    <a-col :span="6">
+                                                        <a-form-item field="dormitory" label="宿舍">
+                                                            <a-input v-model="student.dormitory" />
+                                                        </a-form-item>
+                                                    </a-col>
+                                                </a-row>
+                                            </a-form>
+                                        </div>
+                                    </a-card>
+                                </a-col>
+                                <a-col :span="16">
+
+                                </a-col>
+                            </a-row>
                         </a-space>
-                        <a-select v-else v-model="editData.departmentId" placeholder="请选择学院">
-                            <a-option v-for="dep of departments" :key="dep.id" :value="dep.id" :label="dep.name" />
-                        </a-select>
-                    </a-form-item>
-                </a-form>
-            </a-modal>
+                    </a-col>
+                </a-row>
+            </a-space>
 
             <a-modal v-model:visible="addVisible" @ok="addSubmit" @cancel="addCancel">
                 <template #title>
@@ -120,14 +178,6 @@
                         </a-select>
                     </a-form-item>
                 </a-form>
-            </a-modal>
-
-            <a-modal v-model:visible="viewVisible" @cancel="viewCancle">
-                <template #title>
-                    查看
-                </template>
-
-                <a-descriptions :data="viewData" :title="viewData.name" bordered :column="1" size="large" />
             </a-modal>
 
             <a-modal v-model:visible="searchVisible" @ok="selectData" @cancel="searchCancel">
@@ -158,7 +208,7 @@
 <script setup>
 import { defineProps, reactive, ref, onMounted } from 'vue';
 import { Message } from '@arco-design/web-vue';
-import { get, post, put, del } from '../utils/axios'
+import { get, post, put } from '../utils/axios'
 
 const rowSelection = reactive({
     type: 'checkbox',
@@ -167,16 +217,12 @@ const rowSelection = reactive({
 });
 const selectedKeys = ref([]);
 const pagination = { pageSize: 15 }
-// 四个对话框是否可见
-const editVisible = ref(false);
+// 对话框是否可见
 const addVisible = ref(false);
-const viewVisible = ref(false);
 const searchVisible = ref(false);
 
 // 对话框中会用到的数据
-const editData = ref({});
 const addData = ref({});
-const viewData = ref([]);
 const searchData = ref({});
 
 const data = ref([])
@@ -187,29 +233,90 @@ const departments = ref({})
 const options = ref([])
 const condition = ref('')
 
-const columnsWithDepName = ref([])
+const student = ref({})
+const choosed = ref(false)
 
-const props = defineProps({
-    columns: {
-        type: Array,
-        required: true,
+
+
+const columns = [
+    {
+        title: 'ID',
+        dataIndex: 'id'
     },
-    // data: {
-    //     type: Array,
-    //     required: true,
+    {
+        title: '姓名',
+        dataIndex: 'name'
+    },
+    {
+        title: '性别',
+        dataIndex: 'gender'
+    },
+    {
+        title: '手机号',
+        dataIndex: 'phone',
+    },
+    {
+        title: '学院ID',
+        dataIndex: 'departmentId'
+    },
+    // {
+    //     title: '学院名称',
+    //     dataIndex: 'departmentName'
     // },
-    baseUrl: {
-        type: String,
-        required: true
+    {
+        title: '年级',
+        dataIndex: 'grade',
+    },
+    {
+        title: '班级',
+        dataIndex: 'clazz'
+    },
+    {
+        title: '宿舍',
+        dataIndex: 'dormitory'
     }
+]
 
-});
+const shortColumns = [
+    {
+        title: '姓名',
+        dataIndex: 'name'
+    },
+    {
+        title: '学院名称',
+        dataIndex: 'departmentName'
+    },
+    // {
+    //     title: '学院ID',
+    //     dataIndex: 'departmentId'
+    // },
+    {
+        title: '年级',
+        dataIndex: 'grade',
+    }
+]
+
+const baseUrl = 'student'
+
+const choose = (record) => {
+    student.value = record
+    choosed.value = true
+}
+
+const refresh = () => {
+    addData.value = {}
+    searchData.value = {}
+    condition.value = ''
+    options.value = []
+    student.value = []
+    choosed.value = false
+}
 
 // 获取所有数据
 const fetchData = async () => {
     try {
         loading.value = true
-        const response = await get(props.baseUrl);
+        const response = await get('student');
         console.log(response);
         let t = response.data.data
         for (let i = 0; i < t.length; i++) {
@@ -222,19 +329,10 @@ const fetchData = async () => {
         Message.success({
             content: '成功获取数据！'
         })
-        loading.value = false
-        editData.value = {}
-        addData.value = {}
-        viewData.value = []
-        searchData.value = {}
-        condition.value = ''
-        options.value = []
-
     } catch (error) {
-        // Message.error({
-        //     content: error.message
-        // });
+    } finally {
         loading.value = false
+        refresh()
     }
 };
 
@@ -251,7 +349,7 @@ const fetchDataByCondition = async () => {
         loading.value = true
         let param = {}
         param[options.value] = condition.value
-        const response = await post(props.baseUrl + '/like', param);
+        const response = await post(baseUrl + '/like', param);
         console.log(response);
         let t = response.data.data
         for (let i = 0; i < t.length; i++) {
@@ -265,6 +363,13 @@ const fetchDataByCondition = async () => {
         })
         data.value = t
         loading.value = false
+
+        addData.value = {}
+        searchData.value = {}
+        condition.value = ''
+        options.value = []
+        student.value = []
+        choosed.value = false
     } catch (error) {
         // Message.error({
         //     content: error.message
@@ -272,6 +377,28 @@ const fetchDataByCondition = async () => {
         loading.value = false
     }
 }
+
+// 编辑提交
+const editSubmit = async () => {
+    if (!choosed.value) {
+        Message.error({
+            content: '未选中学生！'
+        });
+        return
+    }
+    try {
+        student.value.gender = student.value.gender == '男' ? 0 : 1
+        const response = await post('student', student.value);
+        fetchData()
+        Message.success({
+            content: '编辑成功！'
+        });
+    } catch (error) {  
+    } finally {
+        choosed.value = false
+        refresh()
+    }
+};
 
 // 新建
 const add = () => {
@@ -283,12 +410,14 @@ const addSubmit = async () => {
     try {
         if (addData.value.hasOwnProperty('gender'))
             addData.value.gender = addData.value.gender == '男' ? 0 : 1
-        const response = await put(props.baseUrl, addData.value);
+        const response = await put(baseUrl, addData.value);
         addVisible.value = false
         fetchData()
         Message.success({
             content: '添加成功！'
         });
+
+
     } catch (error) {
         // console.log(error.message);
         // Message.error({
@@ -307,7 +436,7 @@ const addCancel = () => {
 // 批次删除
 const remove = async () => {
     try {
-        const response = await post(props.baseUrl + '/delete', selectedKeys.value);
+        const response = await post(baseUrl + '/delete', selectedKeys.value);
         fetchData()
         if (response) {
             Message.success({
@@ -322,72 +451,6 @@ const remove = async () => {
     }
 };
 
-// 编辑
-const edit = (record) => {
-    editData.value = record
-    editVisible.value = true
-}
-
-// 编辑提交
-const editSubmit = async () => {
-    try {
-        if (editData.value.hasOwnProperty('gender'))
-            editData.value.gender = editData.value.gender == '男' ? 0 : 1
-        const response = await post(props.baseUrl, editData.value);
-        fetchData()
-        Message.success({
-            content: '编辑成功！'
-        });
-        editVisible.value = false
-    } catch (error) {
-        // Message.error({
-        //     content: error.message
-        // });
-        editVisible.value = false
-    }
-};
-
-// 取消编辑
-const editCancel = () => {
-    editData.value = {}
-    editVisible.value = false
-}
-
-// 查看
-const view = async (record) => {
-
-    for (let idx in props.columns) {
-        let t = props.columns[idx]
-        viewData.value.push({
-            label: t.title,
-            value: record[t.dataIndex]
-        })
-        if (t.dataIndex == 'departmentId') {
-            try {
-                const resp = await get(`department\\${record.departmentId}`);
-                viewData.value.push({
-                    label: '学院名称',
-                    value: resp.data.data.name
-                })
-                viewData.value.push({
-                    label: '学院地址',
-                    value: resp.data.data.address
-                })
-            } catch (error) {
-            }
-        }
-
-
-    }
-    viewVisible.value = true
-
-}
-
-// 取消查看
-const viewCancle = () => {
-    viewVisible.value = false
-    viewData.value = []
-}
 
 // 获取所有部门
 const getAllDepartment = async (id) => {
@@ -395,7 +458,7 @@ const getAllDepartment = async (id) => {
         const response = await get('department');
         departments.value = response.data.data
     } catch (error) {
-    }
+    } 
 }
 
 // 高级查询
@@ -407,7 +470,7 @@ const search = () => {
 const selectData = async () => {
     try {
         loading.value = true
-        const response = await post(props.baseUrl + '/like', searchData.value);
+        const response = await post(baseUrl + '/like', searchData.value);
         console.log(response);
         let t = response.data.data
         for (let i = 0; i < t.length; i++) {
@@ -417,9 +480,10 @@ const selectData = async () => {
                 t[i].salary = parseInt(t[i].salary)
         }
         data.value = t
-        loading.value = false
     } catch (error) {
+    } finally {
         loading.value = false
+        refresh()
     }
 }
 
@@ -431,18 +495,6 @@ const searchCancel = () => {
 
 
 onMounted(() => {
-    // 只在表格中展示“学院名称”，查询和编辑界面不提供“学院名称”编辑项
-    columnsWithDepName.value = [...props.columns]
-    for (let i = 0; i < props.columns.length; i++) {
-        if (props.columns[i].dataIndex == 'departmentId') {
-            columnsWithDepName.value.splice(i, 1, {
-                title: '学院名称',
-                dataIndex: 'departmentName'
-            },)
-            break;
-        }
-
-    }
 
     fetchData()
     getAllDepartment()

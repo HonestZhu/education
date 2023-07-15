@@ -21,7 +21,10 @@ axios.interceptors.response.use(response => {
     // 请求成功
     // 1. 根据自己项目需求定制自己的拦截
     // 2. 然后返回数据
-    console.log(response.data);
+    if(response.data.code != '100') {
+        Message.error(response.data.info)
+        return Promise.reject(new Error(response.data.info))
+    }
     return response;
 }, error => {
     // 请求失败
