@@ -4,7 +4,7 @@
             <div class="head">
                 <a-space direction="vertical" :size="16" style="display: block;">
                     <a-row>
-                        <a-col :span="8">
+                        <a-col :span="6">
                             <a-space direction="vertical" size="large">
                                 <a-input-group>
                                     <a-select v-model="options" :style="{ width: '160px' }" value-key="title"
@@ -18,7 +18,8 @@
                             </a-space>
 
                         </a-col>
-
+                        <a-col :span="1">
+                        </a-col>
                         <a-col :span="1">
                             <a-button status="danger" shape="circle" @click="fetchData">
                                 <icon-loop />
@@ -26,7 +27,7 @@
                         </a-col>
                         <a-col :span="1">
                         </a-col>
-                        <a-col :span="7" class="info">
+                        <a-col :span="5" class="info">
                             <!-- 选中 <span class="digit">{{ selectedKeys.length }}</span> of <span class="digit">{{ data.length
                             }}</span> -->
                             <a-progress :percent="selectedKeys.length > 0 ? selectedKeys.length / data.length : 0"
@@ -35,18 +36,18 @@
                         </a-col>
                         <a-col :span="1">
                         </a-col>
-                        <a-col :span="2">
-                            <a-button size="large" status="success" @click="search">高级查询</a-button>
+                        <a-col :span="3">
+                            <a-button size="small" status="success" @click="search">高级查询</a-button>
                         </a-col>
-                        <a-col :span="2">
+                        <a-col :span="3">
                             <a-popconfirm :content="'你确定要删除' + selectedKeys.length + '个数据？'" okText="确认" cancelText="取消"
                                 type="error" @ok="remove">
-                                <a-button type="primary" size="large" status="danger"
+                                <a-button type="primary" size="small" status="danger"
                                     :disabled="selectedKeys.length == 0"><icon-delete />&nbsp;&nbsp;删除</a-button>
                             </a-popconfirm>
                         </a-col>
-                        <a-col :span="2">
-                            <a-button type="primary" size="large"
+                        <a-col :span="3">
+                            <a-button type="primary" size="small"
                                 @click="add"><icon-plus-circle-fill />&nbsp;&nbsp;添加</a-button>
                         </a-col>
 
@@ -56,11 +57,11 @@
 
 
             <a-space direction="vertical" :size="16" style="display: block;">
-                <a-row>
-                    <a-col :span="8">
+                <a-row :gutter="24">
+                    <a-col :span="9">
                         <a-table class="body" column-resizable row-key="id" :table-layout-fixed="true" :data="data"
                             :row-selection="rowSelection" v-model:selectedKeys="selectedKeys" :pagination="pagination"
-                            :virtual-list-props="{ height: '72vh' }">
+                            :virtual-list-props="{ height: '56vh' }">
                             <template #columns>
                                 <!-- 动态获取列 -->
                                 <a-table-column v-for="(item, index) in shortColumns" :key="index" :title="item.title"
@@ -79,79 +80,122 @@
                             </template>
                         </a-table>
                     </a-col>
-                    <a-col :span="1">
-                    </a-col>
+                    <!-- <a-col :span="1">
+                    </a-col> -->
                     <a-col :span="15">
                         <a-space :size="16" style="display: block;">
-                            <a-row>
-                                <a-col :span="8">
-                                    <a-card :style="{ width: '52vw' }" :title="student.name ? student.name : '未选中学生'">
-                                        <template #extra>
-                                            <a-button @click="editSubmit">提交编辑</a-button>
-                                        </template>
-                                        <div>
-                                            <a-form :model="form">
-                                                <a-row :gutter="16">
-                                                    <a-col :span="6">
-                                                        <a-form-item field="id" label="ID">
-                                                            <a-input v-model="student.id" />
-                                                        </a-form-item>
-                                                    </a-col>
-                                                    <a-col :span="6">
-                                                        <a-form-item field="name" label="姓名">
-                                                            <a-input v-model="student.name" />
-                                                        </a-form-item>
-                                                    </a-col>
-                                                    <a-col :span="6">
-                                                        <a-form-item field="gender" label="性别">
-                                                            <a-space direction="vertical" size="large">
-                                                                <a-radio-group v-model="student.gender">
-                                                                    <a-radio value="男">男</a-radio>
-                                                                    <a-radio value="女">女</a-radio>
-                                                                </a-radio-group>
-                                                            </a-space>
-                                                        </a-form-item>
-                                                    </a-col>
-                                                    <a-col :span="6">
-                                                        <a-form-item field="phone" label="手机">
-                                                            <a-input v-model="student.phone" />
-                                                        </a-form-item>
-                                                    </a-col>
-                                                </a-row>
-                                                <a-row :gutter="16">
-                                                    <a-col :span="6">
-                                                        <a-form-item field="departmentId" label="学院">
-                                                            <a-select v-model="student.departmentId" placeholder="请选择学院"
-                                                                :disabled="student.departmentId == null">
-                                                                <a-option v-for="dep of departments" :key="dep.id"
-                                                                    :value="dep.id" :label="dep.name" />
-                                                            </a-select>
-                                                        </a-form-item>
-                                                    </a-col>
-                                                    <a-col :span="6">
-                                                        <a-form-item field="grade" label="年级">
-                                                            <a-input v-model="student.grade" />
-                                                        </a-form-item>
-                                                    </a-col>
-                                                    <a-col :span="6">
-                                                        <a-form-item field="clazz" label="班级">
-                                                            <a-input v-model="student.clazz" />
-                                                        </a-form-item>
-                                                    </a-col>
-                                                    <a-col :span="6">
-                                                        <a-form-item field="dormitory" label="宿舍">
-                                                            <a-input v-model="student.dormitory" />
-                                                        </a-form-item>
-                                                    </a-col>
-                                                </a-row>
-                                            </a-form>
-                                        </div>
-                                    </a-card>
-                                </a-col>
-                                <a-col :span="16">
-
-                                </a-col>
-                            </a-row>
+                            <a-card :style="{ width: '48vw' }" :title="student.name ? student.name : '未选中学生'">
+                                <template #extra>
+                                    <a-button @click="editSubmit">提交编辑</a-button>
+                                </template>
+                                <div>
+                                    <a-form>
+                                        <a-row :gutter="8" class="row">
+                                            <a-col :span="12">
+                                                <a-form-item field="id" label="ID">
+                                                    <a-input v-model="student.id" />
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="12">
+                                                <a-form-item field="name" label="姓名">
+                                                    <a-input v-model="student.name" />
+                                                </a-form-item>
+                                            </a-col>
+                                        </a-row>
+                                        <a-row :gutter="8" class="row">
+                                            <a-col :span="12">
+                                                <a-form-item field="gender" label="性别">
+                                                    <a-space direction="vertical" size="large">
+                                                        <a-radio-group v-model="student.gender">
+                                                            <a-radio value="男">男</a-radio>
+                                                            <a-radio value="女">女</a-radio>
+                                                        </a-radio-group>
+                                                    </a-space>
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="12">
+                                                <a-form-item field="phone" label="手机">
+                                                    <a-input v-model="student.phone" />
+                                                </a-form-item>
+                                            </a-col>
+                                        </a-row>
+                                        <a-row :gutter="8" class="row">
+                                            <a-col :span="12">
+                                                <a-form-item field="departmentId" label="学院">
+                                                    <a-select v-model="student.departmentId" placeholder="请选择学院"
+                                                        :disabled="student.departmentId == null">
+                                                        <a-option v-for="dep of departments" :key="dep.id" :value="dep.id"
+                                                            :label="dep.name" />
+                                                    </a-select>
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="12">
+                                                <a-form-item field="grade" label="年级">
+                                                    <a-input v-model="student.grade" />
+                                                </a-form-item>
+                                            </a-col></a-row>
+                                        <a-row :gutter="8" class="row">
+                                            <a-col :span="12">
+                                                <a-form-item field="clazz" label="班级">
+                                                    <a-input v-model="student.clazz" />
+                                                </a-form-item>
+                                            </a-col>
+                                            <a-col :span="12">
+                                                <a-form-item field="dormitory" label="宿舍">
+                                                    <a-input v-model="student.dormitory" />
+                                                </a-form-item>
+                                            </a-col>
+                                        </a-row>
+                                    </a-form>
+                                </div>
+                            </a-card>
+                            <a-list :style="{ width: '48vw', paddingRight: '12px' }" :scrollbar="true" :max-height="240"
+                                :bordered="false" :split="false">
+                                <a-list-item v-for="item of growthData" :key="item.id">
+                                    <div class="growthTitle">
+                                        <span class="growthTitleText">
+                                            {{ item.year }} 学年成长记录</span>
+                                        <a-button class="growthTitleBtn" @click="saveGrowth(item)">保存</a-button>
+                                    </div>
+                                    <a-form>
+                                        <a-form-item field="learning" label="学习情况">
+                                            <a-input v-model="item.learning" />
+                                        </a-form-item>
+                                        <a-form-item field="research" label="科研情况">
+                                            <a-input v-model="item.research" />
+                                        </a-form-item>
+                                        <a-form-item field="social" label="社会活动">
+                                            <a-input v-model="item.social" />
+                                        </a-form-item>
+                                    </a-form>
+                                </a-list-item>
+                                <a-list-item>
+                                    <div class="growthTitle">
+                                        <a-input-search v-model="newGrowthData.year" :style="{ width: '320px' }" search-button @search="addGrowth">
+                                            <template #prepend>
+                                                学年
+                                            </template>
+                                            <template #button-icon>
+                                                <icon-save />
+                                            </template>
+                                            <template #button-default>
+                                                保存
+                                            </template>
+                                        </a-input-search>
+                                    </div>
+                                    <a-form>
+                                        <a-form-item field="learning" label="学习情况">
+                                            <a-input v-model="newGrowthData.learning"/>
+                                        </a-form-item>
+                                        <a-form-item field="research" label="科研情况">
+                                            <a-input v-model="newGrowthData.research"/>
+                                        </a-form-item>
+                                        <a-form-item field="social" label="社会活动">
+                                            <a-input v-model="newGrowthData.social"/>
+                                        </a-form-item>
+                                    </a-form>
+                                </a-list-item>
+                            </a-list>
                         </a-space>
                     </a-col>
                 </a-row>
@@ -163,7 +207,7 @@
                 </template>
 
                 <a-form>
-                    <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
+                    <a-form-item v-for="( item, index ) in  columns " :key="item" :field="item.title" :label="item.title">
                         <a-input :placeholder="'请输入' + item.title" v-model="addData[item.dataIndex]"
                             :disabled="item.dataIndex.includes('id') && baseUrl != 'student'"
                             v-if="item.dataIndex != 'gender' && item.dataIndex != 'departmentId'" />
@@ -174,7 +218,7 @@
                             </a-radio-group>
                         </a-space>
                         <a-select v-else v-model="addData.departmentId" placeholder="请选择学院">
-                            <a-option v-for="dep of departments" :key="dep.id" :value="dep.id" :label="dep.name" />
+                            <a-option v-for=" dep  of  departments " :key="dep.id" :value="dep.id" :label="dep.name" />
                         </a-select>
                     </a-form-item>
                 </a-form>
@@ -186,7 +230,7 @@
                 </template>
 
                 <a-form>
-                    <a-form-item v-for="(item, index) in columns" :key="item" :field="item.title" :label="item.title">
+                    <a-form-item v-for="( item, index ) in  columns " :key="item" :field="item.title" :label="item.title">
                         <a-input :placeholder="'请输入' + item.title" v-model="searchData[item.dataIndex]"
                             v-if="item.dataIndex != 'gender' && item.dataIndex != 'departmentId'" />
                         <a-space direction="vertical" size="large" v-else-if="item.dataIndex == 'gender'">
@@ -196,7 +240,7 @@
                             </a-radio-group>
                         </a-space>
                         <a-select v-else v-model="searchData.departmentId" placeholder="请选择学院">
-                            <a-option v-for="dep of departments" :key="dep.id" :value="dep.id" :label="dep.name" />
+                            <a-option v-for=" dep  of  departments " :key="dep.id" :value="dep.id" :label="dep.name" />
                         </a-select>
                     </a-form-item>
                 </a-form>
@@ -236,6 +280,14 @@ const condition = ref('')
 const student = ref({})
 const choosed = ref(false)
 
+const growthData = ref([])
+const emptyGrowthData = {
+    stuId: null,
+    learning: '',
+    research: '',
+    social: ''
+}
+const newGrowthData = ref(emptyGrowthData)
 
 
 const columns = [
@@ -301,6 +353,8 @@ const baseUrl = 'student'
 const choose = (record) => {
     student.value = record
     choosed.value = true
+    newGrowthData.value.stuId = record.id
+    fetchGrowth(student.value.id)
 }
 
 const refresh = () => {
@@ -310,6 +364,8 @@ const refresh = () => {
     options.value = []
     student.value = []
     choosed.value = false
+    newGrowthData.value = { ...emptyGrowthData }
+    growthData.value.value = []
 }
 
 // 获取所有数据
@@ -393,7 +449,7 @@ const editSubmit = async () => {
         Message.success({
             content: '编辑成功！'
         });
-    } catch (error) {  
+    } catch (error) {
     } finally {
         choosed.value = false
         refresh()
@@ -458,7 +514,7 @@ const getAllDepartment = async (id) => {
         const response = await get('department');
         departments.value = response.data.data
     } catch (error) {
-    } 
+    }
 }
 
 // 高级查询
@@ -470,6 +526,7 @@ const search = () => {
 const selectData = async () => {
     try {
         loading.value = true
+        searchData.value.gender = searchData.value.gender == '男' ? 1 : 0
         const response = await post(baseUrl + '/like', searchData.value);
         console.log(response);
         let t = response.data.data
@@ -493,6 +550,48 @@ const searchCancel = () => {
     searchVisible.value = false
 }
 
+const fetchGrowth = async (id) => {
+    try {
+        const response = await get(`/growth/record/all/of/${id}`);
+        growthData.value = response.data.data
+    } catch (error) {
+    } finally {
+    }
+}
+
+const saveGrowth = async (record) => {
+    try {
+        const response = await post(`/growth/record`, record);
+        Message.success({
+            content: '成功修改成长记录！'
+        })
+        fetchGrowth(record.stuId)
+        // fetchData()
+    } catch (error) {
+    } finally {
+        // refresh()
+    }
+}
+
+const addGrowth = async () => {
+    if (!newGrowthData.value.stuId || newGrowthData.value.stuId.length == 0) {
+        Message.error({
+            content: '请先选中学生！'
+        })
+        return
+    }
+    try {
+        const response = await put(`/growth/record`, newGrowthData.value);
+        Message.success({
+            content: '成功新增成长记录！'
+        })
+        fetchGrowth(newGrowthData.value.stuId)
+        // fetchData()
+    } catch (error) {
+    } finally {
+        newGrowthData.value = { ... emptyGrowthData }
+    }
+}
 
 onMounted(() => {
 
@@ -532,6 +631,29 @@ onMounted(() => {
 
 .btn {
     margin-left: 10px;
+}
+
+.row {
+    height: 40px;
+}
+
+.growthTitle {
+    width: 320px;
+    height: 50px;
+}
+
+.growthTitleText {
+    width: 250px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 18px;
+    margin-left: 2px;
+    margin-right: 12px;
+    padding: 4px;
+}
+
+.growthTitleBtn {
+    margin: 5px;
 }
 </style>
   

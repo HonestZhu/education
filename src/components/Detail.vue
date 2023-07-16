@@ -4,7 +4,7 @@
             <div class="head">
                 <a-space direction="vertical" :size="16" style="display: block;">
                     <a-row>
-                        <a-col :span="8">
+                        <a-col :span="6">
                             <a-space direction="vertical" size="large">
                                 <a-input-group>
                                     <a-select v-model="options" :style="{ width: '160px' }" value-key="title"
@@ -18,7 +18,8 @@
                             </a-space>
 
                         </a-col>
-
+                        <a-col :span="1">
+                        </a-col>
                         <a-col :span="1">
                             <a-button status="danger" shape="circle" @click="fetchData">
                                 <icon-loop />
@@ -26,7 +27,7 @@
                         </a-col>
                         <a-col :span="1">
                         </a-col>
-                        <a-col :span="7" class="info">
+                        <a-col :span="5" class="info">
                             <!-- 选中 <span class="digit">{{ selectedKeys.length }}</span> of <span class="digit">{{ data.length
                             }}</span> -->
                             <a-progress :percent="selectedKeys.length > 0 ? selectedKeys.length / data.length : 0"
@@ -35,18 +36,18 @@
                         </a-col>
                         <a-col :span="1">
                         </a-col>
-                        <a-col :span="2">
-                            <a-button size="large" status="success" @click="search">高级查询</a-button>
+                        <a-col :span="3">
+                            <a-button size="small" status="success" @click="search">高级查询</a-button>
                         </a-col>
-                        <a-col :span="2">
+                        <a-col :span="3">
                             <a-popconfirm :content="'你确定要删除' + selectedKeys.length + '个数据？'" okText="确认" cancelText="取消"
                                 type="error" @ok="remove">
-                                <a-button type="primary" size="large" status="danger"
+                                <a-button type="primary" size="small" status="danger"
                                     :disabled="selectedKeys.length == 0"><icon-delete />&nbsp;&nbsp;删除</a-button>
                             </a-popconfirm>
                         </a-col>
-                        <a-col :span="2">
-                            <a-button type="primary" size="large"
+                        <a-col :span="3">
+                            <a-button type="primary" size="small"
                                 @click="add"><icon-plus-circle-fill />&nbsp;&nbsp;添加</a-button>
                         </a-col>
 
@@ -56,7 +57,7 @@
             <!-- 显示数据 -->
             <a-table class="body" column-resizable row-key="id" :table-layout-fixed="true" :data="data"
                 :row-selection="rowSelection" v-model:selectedKeys="selectedKeys" :pagination="pagination"
-                :virtual-list-props="{ height: '72vh' }">
+                :virtual-list-props="{ height: '58vh' }">
                 <template #columns>
                     <!-- 动态获取列 -->
                     <a-table-column v-for="(item, index) in columnsWithDepName" :key="index" :title="item.title"
