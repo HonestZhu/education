@@ -55,7 +55,6 @@
                 </a-space>
             </div>
 
-
             <a-space direction="vertical" :size="16" style="display: block;">
                 <a-row :gutter="24">
                     <a-col :span="10">
