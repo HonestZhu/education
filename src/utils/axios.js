@@ -3,7 +3,9 @@ import { Message } from '@arco-design/web-vue';
 
 // 请求拦截
 axios.interceptors.request.use(config => {
-    config.baseURL = 'http://localhost:8081'
+    // config.baseURL = 'http://localhost:8081'
+    config.baseURL = 'http://124.221.174.50:8081'
+
     // 1. 这个位置就请求前最后的配置
     // 2. 当然你也可以在这个位置 加入你的后端需要的用户授权信息
     // 添加用户授权信息到请求头

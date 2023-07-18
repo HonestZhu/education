@@ -58,7 +58,7 @@
 
             <a-space direction="vertical" :size="16" style="display: block;">
                 <a-row :gutter="24">
-                    <a-col :span="9">
+                    <a-col :span="10">
                         <a-table class="body" column-resizable row-key="id" :table-layout-fixed="true" :data="data"
                             :row-selection="rowSelection" v-model:selectedKeys="selectedKeys" :pagination="pagination"
                             :virtual-list-props="{ height: '56vh' }">
@@ -82,7 +82,7 @@
                     </a-col>
                     <!-- <a-col :span="1">
                     </a-col> -->
-                    <a-col :span="15">
+                    <a-col :span="14">
                         <a-space :size="16" style="display: block;">
                             <a-card :style="{ width: '48vw' }" :title="student.name ? student.name : '未选中学生'">
                                 <template #extra>
