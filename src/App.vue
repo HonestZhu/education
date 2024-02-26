@@ -77,7 +77,7 @@
         </a-layout-content>
 
         <a-layout-footer>
-          <span class="foot">Code by group 2 王鹏 朱嘉诚 傅胤燊 王超弘</span>
+          <span class="foot">Code by group 5 张祺珲 蒋旭 刘志鹏 田文尉 朱嘉诚 傅胤燊</span>
         </a-layout-footer>
       </a-layout>
     </a-layout>
